@@ -18,9 +18,22 @@ async def get_user_validation(password: str):
 
 
 # {} takes the parameter in the url itself (path parameter)
-@app.get("/book/{isbn}")
+# Returns a Book model and removes author by default
+@app.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"])
 async def get_book_with_isbn(isbn: str):
-    return {"query changeable parameter": isbn}
+    author_dict ={
+        "name": "author 1",
+        "book": ["book 1", "book 2"]
+    }
+    author_1 = Author(**author_dict)
+    book_dict = {
+        "isbn": isbn,
+        "name": "my book",
+        "year": 2019,
+        "author": author_1
+    }
+    book_1 = Book(**book_dict)
+    return book_1
 
 
 # Query and path parameter
