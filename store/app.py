@@ -2,11 +2,13 @@ from fastapi import FastAPI, Body, Header
 from models.user import User
 from models.author import Author
 from models.book import Book
+from starlette.status import HTTP_201_CREATED
+
 
 app = FastAPI()
 
 
-@app.post('/user')
+@app.post('/user', status_code=HTTP_201_CREATED)
 async def post_user(user: User, x_custom: str = Header("Default header")):
     return {"request body": user, "request customer header": x_custom}
 
