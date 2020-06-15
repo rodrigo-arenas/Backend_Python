@@ -3,7 +3,7 @@ from models.user import User
 from models.author import Author
 from models.book import Book
 from starlette.status import HTTP_201_CREATED
-
+from starlette.responses import Response
 
 app = FastAPI()
 
@@ -57,7 +57,9 @@ async def post_user_and_author(user: User, author: Author, bookstore_name: str =
     return {"user": user, "author": author, "bookstore_name": bookstore_name}
 
 
-# Upload an user photo
+# Upload an user photo (multipart)
 @app.post("/user/photo")
-async def update_photo(profile_photo: bytes = File(...)):
+async def update_photo(response:Response, profile_photo: bytes = File(...)):
+    response.headers['x-file-size'] = str(len(profile_photo))
+    response.set_cookie(key ='cookie-api', value="test")
     return {"profile photo size": len(profile_photo)}
