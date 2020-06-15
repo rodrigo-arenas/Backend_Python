@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Header
 from models.user import User
 from models.author import Author
 from models.book import Book
@@ -7,8 +7,8 @@ app = FastAPI()
 
 
 @app.post('/user')
-async def post_user(user: User):
-    return {"request body": user}
+async def post_user(user: User, x_custom: str = Header("Default header")):
+    return {"request body": user, "request customer header": x_custom}
 
 
 # Query parameter /user/?password
