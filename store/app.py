@@ -34,3 +34,10 @@ async def get_author_books(author_id: int, category: str, order: str = "asc"):
 @app.patch('/author/name')
 async def put_user_name(name: str = Body(..., embed=True)):
     return {"body parameters": name}
+
+
+# Take two models at the same time
+@app.post('/user/author')
+async def post_user_and_author(user: User, author: Author, bookstore_name: str = Body(..., embed=True)):
+    return {"user": user, "author": author, "bookstore_name": bookstore_name}
+
