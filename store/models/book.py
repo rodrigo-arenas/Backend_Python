@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from models.autorh import AUthor
+from models.author import Author
+
 
 class Book(BaseModel):
     isbn: str
