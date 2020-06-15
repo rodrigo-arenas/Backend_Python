@@ -7,7 +7,7 @@ class Role(enum.Enum):
     personal = "personal"
 
 
-class Users(BaseModel):
+class User(BaseModel):
     name: str
     password: str
     mail: str
