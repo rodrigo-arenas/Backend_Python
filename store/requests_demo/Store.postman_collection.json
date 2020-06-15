@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "13930945-2914-4892-9438-03758263511e",
+		"name": "FastAPI_Course",
+		"description": "Collection for udemy course https://www.udemy.com/course/python-api-development/",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "store",
+			"item": [
+				{
+					"name": "/user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"user1\",\n    \"password\": \"admin\",\n    \"mail\": \"admin@store.com\",\n    \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "Creates a user"
+					},
+					"response": []
+				},
+				{
+					"name": "/user?password",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user?password=admin",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "admin"
+								}
+							]
+						},
+						"description": "Creates a user"
+					},
+					"response": []
+				},
+				{
+					"name": "/book/{isbn}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user?password=admin",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "admin"
+								}
+							]
+						},
+						"description": "get book by isbn"
+					},
+					"response": []
+				},
+				{
+					"name": "/book/{isbn} Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user?password=admin",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "admin"
+								}
+							]
+						},
+						"description": "get book by isbn"
+					},
+					"response": []
+				},
+				{
+					"name": "/author/name",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"user1\",\n    \"unused\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/author/name",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"author",
+								"name"
+							]
+						},
+						"description": "Creates a user"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/author",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \"user\":{\n        \"name\": \"user1\",\n        \"password\": \"admin\",\n        \"mail\": \"admin@store.com\",\n        \"role\": \"admin\"\n\n    },\n    \"author\":{\n        \"name\": \"author 1\",\n        \"book\": [\"book1\", \"book2\"]\n    },\n    \"bookstore_name\": \"store 1\"\n    \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/author",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"author"
+							]
+						},
+						"description": "Creates a user"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "aa98bf1e-6755-40c3-b332-103ff4e4a707",
+			"key": "url",
+			"value": "http://127.0.0.1:5000/",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
