@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body, Header
+from fastapi import FastAPI, Body, Header, File
 from models.user import User
 from models.author import Author
 from models.book import Book
@@ -56,3 +56,8 @@ async def put_user_name(name: str = Body(..., embed=True)):
 async def post_user_and_author(user: User, author: Author, bookstore_name: str = Body(..., embed=True)):
     return {"user": user, "author": author, "bookstore_name": bookstore_name}
 
+
+# Upload an user photo
+@app.post("/user/photo")
+async def update_photo(profile_photo: bytes = File(...)):
+    return {"profile photo size": len(profile_photo)}
