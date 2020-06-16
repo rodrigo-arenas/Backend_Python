@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 pwd_context = CryptContext(schemes=["bcrypt"])
+# This should go check in a database
 jwt_user1 = {"username": "user1",
              "password": "$2b$12$EwjSQTNMAoiWYSZy.HAGoeeyVmxGj/I4stPh49iDkAH.ng5vSGzIu",
              "disabled": False,
@@ -32,8 +33,9 @@ def verify_password(password, hashed_password):
 # Authenticate username and password to give JWT Token
 def authenticate_user(user: JWTUser):
     if fake_jwt_user1.username == user.username and verify_password(user.password, fake_jwt_user1.password):
-        return True
-    return False
+        user.role = "admin"
+        return user
+    return None
 
 
 # Create Access JWT Token
@@ -43,7 +45,7 @@ def create_jwt_token(user: JWTUser):
                    "role": user.role,
                    "exp": expiration_time}
     jwt_token = jwt.encode(jwt_payload, JWT_SECRET_KEY, JWT_ALGORITHM)
-    return {"token": jwt_token}
+    return jwt_token
 
 
 # Check whether JWT token is correct
