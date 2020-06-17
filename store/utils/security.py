@@ -3,9 +3,10 @@ from models.jwt_user import JWTUser
 from datetime import datetime, timedelta
 from utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
 import jwt
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette.status import HTTP_401_UNAUTHORIZED
+import time
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 # This should go check in a database
@@ -55,10 +56,11 @@ def check_jwt_token(token: str = Depends(oauth_schema)):
         username = jwt_payload.get("sub")
         role = jwt_payload.get("role")
         expiration = jwt_payload.get("exp")
-        if datetime.utcnow() < expiration and fake_jwt_user1.username == username:
+        if time.time() < expiration and fake_jwt_user1.username == username:
             return final_checks(role)
     except Exception as e:
-        return HTTP_401_UNAUTHORIZED
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+    raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 
 # Last checking and return final result, for now, only login admin role
@@ -66,4 +68,4 @@ def final_checks(role: str):
     if role == "admin":
         return True
     else:
-        return False
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
