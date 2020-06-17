@@ -1,14 +1,30 @@
-from fastapi import FastAPI, Body, Header, File
+from fastapi import FastAPI, Body, Header, File, Depends, HTTPException
 from models.user import User
 from models.author import Author
 from models.book import Book
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
 from starlette.responses import Response
+from fastapi.security import OAuth2PasswordRequestForm
+from utils.security import authenticate_user, create_jwt_token
+from models.jwt_user import JWTUser
 
-app_v1 = FastAPI(openapi_prefix='/v1')
+app_v1 = FastAPI(root_path='/v1')
+
+
+# FastAPI requires that username and password be sent
+@app_v1.post('/token')
+async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    jwt_user_dict = {"username": form_data.username, "password": form_data.password}
+    jwt_user = JWTUser(**jwt_user_dict)
+    user = authenticate_user(jwt_user)
+    if user is None:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+    jwt_token = create_jwt_token(user)
+    return {"token": jwt_token, "token_type": "bearer"}
 
 
 @app_v1.post('/user', status_code=HTTP_201_CREATED)
+# async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
 async def post_user(user: User, x_custom: str = Header("Default header")):
     return {"request body": user, "request customer header": x_custom}
 
@@ -23,7 +39,7 @@ async def get_user_validation(password: str):
 # Returns a Book model and removes author by default
 @app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"])
 async def get_book_with_isbn(isbn: str):
-    author_dict ={
+    author_dict = {
         "name": "author 1",
         "book": ["book 1", "book 2"]
     }
@@ -59,7 +75,7 @@ async def post_user_and_author(user: User, author: Author, bookstore_name: str =
 
 # Upload an user photo (multipart)
 @app_v1.post("/user/photo")
-async def update_photo(response:Response, profile_photo: bytes = File(...)):
+async def update_photo(response: Response, profile_photo: bytes = File(...)):
     response.headers['x-file-size'] = str(len(profile_photo))
-    response.set_cookie(key ='cookie-api', value="test")
+    response.set_cookie(key='cookie-api', value="test")
     return {"profile photo size": len(profile_photo)}
