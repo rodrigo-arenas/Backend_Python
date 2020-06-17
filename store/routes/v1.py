@@ -20,7 +20,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     if user is None:
         return HTTP_401_UNAUTHORIZED
     jwt_token = create_jwt_token(user)
-    return {"token": jwt_token}
+    return {"token": jwt_token, "token_type": "bearer"}
 
 
 @app_v1.post('/user', status_code=HTTP_201_CREATED)
