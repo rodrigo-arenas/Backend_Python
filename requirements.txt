@@ -5,4 +5,5 @@ starlette==0.13.4
 pyjwt==1.7.1
 passlib==1.7.2
 bcrypt==3.1.7
-jwt==1.0.0
+PyJWT==1.7.1
+python-multipart==0.0.5
