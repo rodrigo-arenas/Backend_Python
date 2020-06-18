@@ -17,7 +17,9 @@ app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token)]
 
 
 # FastAPI requires that username and password be sent
-@app.post('/token', summary="Returns JWT Token", description="Check for username and password to generate JWT token")
+@app.post('/token', summary="Returns JWT Token",
+          description="Check for username and password to generate JWT token",
+          tags=["Auth"])
 async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     jwt_user_dict = {"username": form_data.username, "password": form_data.password}
     jwt_user = JWTUser(**jwt_user_dict)
@@ -28,6 +30,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": jwt_token, "token_type": "bearer"}
 
 
+"""
 # Middleware to handle jwt auth in all the endpoints
 @app.middleware("http")
 async def middleware(request: Request, call_next):
@@ -46,3 +49,4 @@ async def middleware(request: Request, call_next):
     execution_time = (datetime.utcnow() - start_time).microseconds
     response.headers["x-execution_time"] = str(execution_time)
     return response
+"""
