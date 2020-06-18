@@ -9,21 +9,21 @@ from starlette.responses import Response
 app_v1 = APIRouter()
 
 
-@app_v1.post('/user', status_code=HTTP_201_CREATED)
+@app_v1.post('/user', status_code=HTTP_201_CREATED, tags=["User"])
 # async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
 async def post_user(user: User, x_custom: str = Header("Default header")):
     return {"request body": user, "request customer header": x_custom}
 
 
 # Query parameter /user/?password
-@app_v1.get('/user')
+@app_v1.get('/user', tags=["User"])
 async def get_user_validation(password: str):
     return {"query parameter": password}
 
 
 # {} takes the parameter in the url itself (path parameter)
 # Returns a Book model and removes author by default
-@app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"])
+@app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"], tags=["Book"])
 async def get_book_with_isbn(isbn: str):
     author_dict = {
         "name": "author 1",
@@ -41,26 +41,26 @@ async def get_book_with_isbn(isbn: str):
 
 
 # Query and path parameter
-@app_v1.get("/author/{author_id}/book")
+@app_v1.get("/author/{author_id}/book", tags=["Author"])
 async def get_author_books(author_id: int, category: str, order: str = "asc"):
     return {"query changeable parameter": category + order + str(author_id)}
 
 
 # Update authors name, get the information from body request
 # embed=True makes the parameter a key in body json
-@app_v1.patch('/author/name')
+@app_v1.patch('/author/name', tags=["Author"])
 async def put_user_name(name: str = Body(..., embed=True)):
     return {"body parameters": name}
 
 
 # Take two models at the same time
-@app_v1.post('/user/author')
+@app_v1.post('/user/author', tags=["User", "Author"])
 async def post_user_and_author(user: User, author: Author, bookstore_name: str = Body(..., embed=True)):
     return {"user": user, "author": author, "bookstore_name": bookstore_name}
 
 
 # Upload an user photo (multipart)
-@app_v1.post("/user/photo")
+@app_v1.post("/user/photo", tags=["User"])
 async def update_photo(response: Response, profile_photo: bytes = File(...)):
     response.headers['x-file-size'] = str(len(profile_photo))
     response.set_cookie(key='cookie-api', value="test")
