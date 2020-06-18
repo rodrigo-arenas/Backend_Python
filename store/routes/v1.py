@@ -1,43 +1,29 @@
-from fastapi import FastAPI, Body, Header, File, Depends, HTTPException
+from fastapi import Body, Header, File, APIRouter
 from models.user import User
 from models.author import Author
 from models.book import Book
-from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_201_CREATED
 from starlette.responses import Response
-from fastapi.security import OAuth2PasswordRequestForm
-from utils.security import authenticate_user, create_jwt_token
-from models.jwt_user import JWTUser
-
-app_v1 = FastAPI(root_path='/v1')
 
 
-# FastAPI requires that username and password be sent
-@app_v1.post('/token')
-async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    jwt_user_dict = {"username": form_data.username, "password": form_data.password}
-    jwt_user = JWTUser(**jwt_user_dict)
-    user = authenticate_user(jwt_user)
-    if user is None:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
-    jwt_token = create_jwt_token(user)
-    return {"token": jwt_token, "token_type": "bearer"}
+app_v1 = APIRouter()
 
 
-@app_v1.post('/user', status_code=HTTP_201_CREATED)
+@app_v1.post('/user', status_code=HTTP_201_CREATED, tags=["User"])
 # async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
 async def post_user(user: User, x_custom: str = Header("Default header")):
     return {"request body": user, "request customer header": x_custom}
 
 
 # Query parameter /user/?password
-@app_v1.get('/user')
+@app_v1.get('/user', tags=["User"])
 async def get_user_validation(password: str):
     return {"query parameter": password}
 
 
 # {} takes the parameter in the url itself (path parameter)
 # Returns a Book model and removes author by default
-@app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"])
+@app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"], tags=["Book"])
 async def get_book_with_isbn(isbn: str):
     author_dict = {
         "name": "author 1",
@@ -55,26 +41,26 @@ async def get_book_with_isbn(isbn: str):
 
 
 # Query and path parameter
-@app_v1.get("/author/{author_id}/book")
+@app_v1.get("/author/{author_id}/book", tags=["Author"])
 async def get_author_books(author_id: int, category: str, order: str = "asc"):
     return {"query changeable parameter": category + order + str(author_id)}
 
 
 # Update authors name, get the information from body request
 # embed=True makes the parameter a key in body json
-@app_v1.patch('/author/name')
+@app_v1.patch('/author/name', tags=["Author"])
 async def put_user_name(name: str = Body(..., embed=True)):
     return {"body parameters": name}
 
 
 # Take two models at the same time
-@app_v1.post('/user/author')
+@app_v1.post('/user/author', tags=["User", "Author"])
 async def post_user_and_author(user: User, author: Author, bookstore_name: str = Body(..., embed=True)):
     return {"user": user, "author": author, "bookstore_name": bookstore_name}
 
 
 # Upload an user photo (multipart)
-@app_v1.post("/user/photo")
+@app_v1.post("/user/photo", tags=["User"])
 async def update_photo(response: Response, profile_photo: bytes = File(...)):
     response.headers['x-file-size'] = str(len(profile_photo))
     response.set_cookie(key='cookie-api', value="test")
