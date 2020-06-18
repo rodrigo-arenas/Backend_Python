@@ -1,26 +1,12 @@
-from fastapi import FastAPI, Body, Header, File, Depends, HTTPException
+from fastapi import Body, Header, File, APIRouter
 from models.user import User
 from models.author import Author
 from models.book import Book
-from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_201_CREATED
 from starlette.responses import Response
-from fastapi.security import OAuth2PasswordRequestForm
-from utils.security import authenticate_user, create_jwt_token
-from models.jwt_user import JWTUser
-
-app_v1 = FastAPI(root_path='/v1')
 
 
-# FastAPI requires that username and password be sent
-@app_v1.post('/token')
-async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    jwt_user_dict = {"username": form_data.username, "password": form_data.password}
-    jwt_user = JWTUser(**jwt_user_dict)
-    user = authenticate_user(jwt_user)
-    if user is None:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
-    jwt_token = create_jwt_token(user)
-    return {"token": jwt_token, "token_type": "bearer"}
+app_v1 = APIRouter()
 
 
 @app_v1.post('/user', status_code=HTTP_201_CREATED)
