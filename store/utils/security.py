@@ -9,12 +9,6 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 import time
 
 pwd_context = CryptContext(schemes=["bcrypt"])
-# This should go check in a database
-jwt_user1 = {"username": "user1",
-             "password": "$2b$12$EwjSQTNMAoiWYSZy.HAGoeeyVmxGj/I4stPh49iDkAH.ng5vSGzIu",
-             "disabled": False,
-             "role": "admin"}
-fake_jwt_user1 = JWTUser(**jwt_user1)
 
 # Creates oauth /token endpoint
 oauth_schema = OAuth2PasswordBearer(tokenUrl='/token')
