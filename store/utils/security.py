@@ -1,12 +1,13 @@
-from passlib.context import CryptContext
-from models.jwt_user import JWTUser
-from datetime import datetime, timedelta
-from utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
 import jwt
+import time
+from passlib.context import CryptContext
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette.status import HTTP_401_UNAUTHORIZED
-import time
+from datetime import datetime, timedelta
+from models.jwt_user import JWTUser
+from utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
+from utils.context_manager.db_functions import db_get_user, db_check_jwt_username
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 
@@ -26,8 +27,10 @@ def verify_password(password, hashed_password):
 
 
 # Authenticate username and password to give JWT Token
-def authenticate_user(user: JWTUser):
-    if fake_jwt_user1.username == user.username and verify_password(user.password, fake_jwt_user1.password):
+async def authenticate_user(user: JWTUser):
+    potential_user = await db_get_user(user)
+    is_valid = verify_password(user.password, potential_user['password'])
+    if is_valid:
         user.role = "admin"
         return user
     return None
@@ -44,13 +47,14 @@ def create_jwt_token(user: JWTUser):
 
 
 # Check whether JWT token is correct
-def check_jwt_token(token: str = Depends(oauth_schema)):
+async def check_jwt_token(token: str = Depends(oauth_schema)):
     try:
         jwt_payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM)
         username = jwt_payload.get("sub")
         role = jwt_payload.get("role")
         expiration = jwt_payload.get("exp")
-        if time.time() < expiration and fake_jwt_user1.username == username:
+        is_valid = await db_check_jwt_username(username)
+        if time.time() < expiration and is_valid:
             return final_checks(role)
     except Exception as e:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
