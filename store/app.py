@@ -23,7 +23,7 @@ app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token)]
 async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     jwt_user_dict = {"username": form_data.username, "password": form_data.password}
     jwt_user = JWTUser(**jwt_user_dict)
-    user = authenticate_user(jwt_user)
+    user = await authenticate_user(jwt_user)
     if user is None:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
     jwt_token = create_jwt_token(user)
