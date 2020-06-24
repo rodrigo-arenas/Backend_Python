@@ -1,9 +1,10 @@
 from fastapi import Body, Header, File, APIRouter
+from starlette.status import HTTP_201_CREATED
+from starlette.responses import Response
 from models.user import User
 from models.author import Author
 from models.book import Book
-from starlette.status import HTTP_201_CREATED
-from starlette.responses import Response
+from utils.context_manager.db_functions import db_insert_personnel
 
 
 app_v1 = APIRouter()
@@ -11,8 +12,9 @@ app_v1 = APIRouter()
 
 @app_v1.post('/user', status_code=HTTP_201_CREATED, tags=["User"])
 # async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
-async def post_user(user: User, x_custom: str = Header("Default header")):
-    return {"request body": user, "request customer header": x_custom}
+async def post_user(user: User):
+    await db_insert_personnel(user)
+    return {"request body": user, "message": "Personnel is created"}
 
 
 # Query parameter /user/?password
