@@ -5,7 +5,6 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.status import HTTP_401_UNAUTHORIZED
 from utils.security import check_jwt_token, authenticate_user, create_jwt_token
-from datetime import datetime
 from fastapi.security import OAuth2PasswordRequestForm
 from models.jwt_user import JWTUser
 
