@@ -7,7 +7,8 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from datetime import datetime, timedelta
 from models.jwt_user import JWTUser
 from utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
-from utils.context_manager.db_functions import db_get_user
+from utils.context_manager.db_functions import db_get_user, db_check_jwt_username
+
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 
