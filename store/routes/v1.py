@@ -5,7 +5,7 @@ from models.user import User
 from models.author import Author
 from models.book import Book
 from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
-     db_get_book_with_isbn, db_get_author, db_get_author_from_id)
+     db_get_book_with_isbn, db_get_author, db_get_author_from_id, db_patch_author)
 
 
 app_v1 = APIRouter()
@@ -54,9 +54,10 @@ async def get_author_books(author_id: int,  order: str = "asc"):
 
 # Update authors name, get the information from body request
 # embed=True makes the parameter a key in body json
-@app_v1.patch('/author/name', tags=["Author"])
-async def put_user_name(name: str = Body(..., embed=True)):
-    return {"body parameters": name}
+@app_v1.patch('/author/{author_id}/name', tags=["Author"])
+async def put_user_name(author_id: int, name: str = Body(..., embed=True)):
+    await db_patch_author(author_id, name)
+    return {"message": "name is updated"}
 
 
 # Take two models at the same time
