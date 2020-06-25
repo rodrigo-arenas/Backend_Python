@@ -71,11 +71,19 @@ async def db_get_author(author_name):
         return db_author
 
 
-async def db_get_author_from_id(_id):
+async def db_get_author_from_id(author_id):
     async with db_connection as connection:
-        query = f"SELECT * FROM public.fn_get_author_from_id('{_id}')"
+        query = f"SELECT * FROM public.fn_get_author_from_id('{author_id}')"
         try:
             db_author = dict(await connection.fetchrow(query))
         except Exception as e:
             db_author = {}
         return db_author
+
+
+async def db_patch_author(author_id, name):
+    async with db_connection as connection:
+        query = f"SELECT * FROM public.fn_update_author_name(\
+                                '{author_id}', \
+                                '{name}')"
+        await connection.execute(query)
