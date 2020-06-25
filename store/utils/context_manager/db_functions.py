@@ -33,3 +33,15 @@ async def db_insert_personnel(user):
                                 '{user.mail}', \
                                 '{user.role}')"
         await connection.execute(query)
+
+
+async def db_check_personnel(username, password):
+    async with DatabaseConnection(host=DB_HOST, port=5432,
+                                  database=DB_NAME, user=DB_USER,
+                                  password=DB_PASSWORD) as connection:
+        query = f"SELECT * FROM public.fn_get_personnel('{username}','{password}')"
+        db_personnel = dict(await connection.fetchrow(query))
+        if bool(db_personnel):
+            return True
+        else:
+            return False
