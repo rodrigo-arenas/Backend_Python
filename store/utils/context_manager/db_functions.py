@@ -49,3 +49,23 @@ async def db_check_personnel(username, password):
             return True
         else:
             return False
+
+
+async def db_get_book_with_isbn(isbn):
+    async with db_connection as connection:
+        query = f"SELECT * FROM public.fn_get_book('{isbn}')"
+        try:
+            db_book = dict(await connection.fetchrow(query))
+        except Exception as e:
+            db_book = {}
+        return db_book
+
+
+async def db_get_author(author_name):
+    async with db_connection as connection:
+        query = f"SELECT * FROM public.fn_get_author('{author_name}')"
+        try:
+            db_author= dict(await connection.fetchrow(query))
+        except Exception as e:
+            db_author = {}
+        return db_author
