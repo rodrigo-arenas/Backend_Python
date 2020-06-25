@@ -4,7 +4,7 @@ from starlette.responses import Response
 from models.user import User
 from models.author import Author
 from models.book import Book
-from utils.context_manager.db_functions import db_insert_personnel
+from utils.context_manager.db_functions import db_insert_personnel, db_check_personnel
 
 
 app_v1 = APIRouter()
@@ -18,9 +18,10 @@ async def post_user(user: User):
 
 
 # Query parameter /user/?password
-@app_v1.get('/user', tags=["User"])
-async def get_user_validation(password: str):
-    return {"query parameter": password}
+@app_v1.post('/login', tags=["User"])
+async def get_user_validation(username: str = Body(...), password: str = Body(...)):
+    is_valid = await db_check_personnel(username, password)
+    return {"is_valid": is_valid}
 
 
 # {} takes the parameter in the url itself (path parameter)
