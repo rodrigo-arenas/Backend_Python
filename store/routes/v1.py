@@ -4,7 +4,8 @@ from starlette.responses import Response
 from models.user import User
 from models.author import Author
 from models.book import Book
-from utils.context_manager.db_functions import db_insert_personnel, db_check_personnel
+from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
+     db_get_book_with_isbn, db_get_author)
 
 
 app_v1 = APIRouter()
@@ -28,19 +29,12 @@ async def get_user_validation(username: str = Body(...), password: str = Body(..
 # Returns a Book model and removes author by default
 @app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"], tags=["Book"])
 async def get_book_with_isbn(isbn: str):
-    author_dict = {
-        "name": "author 1",
-        "book": ["book 1", "book 2"]
-    }
-    author_1 = Author(**author_dict)
-    book_dict = {
-        "isbn": isbn,
-        "name": "my book",
-        "year": 2019,
-        "author": author_1
-    }
-    book_1 = Book(**book_dict)
-    return book_1
+    book = await db_get_book_with_isbn(isbn)
+    author = await db_get_author(book['author'])
+    author_object = Author(**author)
+    book['author'] = author_object
+    result_book = Book(**book)
+    return result_book
 
 
 # Query and path parameter
