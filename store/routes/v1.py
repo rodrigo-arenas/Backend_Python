@@ -5,7 +5,7 @@ from models.user import User
 from models.author import Author
 from models.book import Book
 from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
-     db_get_book_with_isbn, db_get_author)
+     db_get_book_with_isbn, db_get_author, db_get_author_from_id)
 
 
 app_v1 = APIRouter()
@@ -39,8 +39,17 @@ async def get_book_with_isbn(isbn: str):
 
 # Query and path parameter
 @app_v1.get("/author/{author_id}/book", tags=["Author"])
-async def get_author_books(author_id: int, category: str, order: str = "asc"):
-    return {"query changeable parameter": category + order + str(author_id)}
+async def get_author_books(author_id: int,  order: str = "asc"):
+    author = await db_get_author_from_id(author_id)
+    if bool(author):
+        books = author['books']
+        if order == 'asc':
+            books = sorted(books)
+        else:
+            books = sorted(books, reverse=True)
+        return {'books': books}
+    else:
+        return {f"No author found by id {author_id}"}
 
 
 # Update authors name, get the information from body request
@@ -62,3 +71,4 @@ async def update_photo(response: Response, profile_photo: bytes = File(...)):
     response.headers['x-file-size'] = str(len(profile_photo))
     response.set_cookie(key='cookie-api', value="test")
     return {"profile photo size": len(profile_photo)}
+
