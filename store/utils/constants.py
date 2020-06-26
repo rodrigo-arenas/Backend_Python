@@ -9,3 +9,5 @@ DB_NAME = 'bookstore'
 DB_USER = 'postgres'
 DB_PASSWORD = 'postgres'
 DB_PORT = 5432
+
+REDIS_URL = 'redis://localhost'
