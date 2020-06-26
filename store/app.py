@@ -1,18 +1,30 @@
+import aioredis
 from fastapi import FastAPI, Depends, HTTPException
 from routes.v1 import app_v1
 from routes.v2 import app_v2
-from starlette.requests import Request
-from starlette.responses import Response
 from starlette.status import HTTP_401_UNAUTHORIZED
 from utils.security import check_jwt_token, authenticate_user, create_jwt_token
+from utils.constants import REDIS_URL
 from fastapi.security import OAuth2PasswordRequestForm
 from models.jwt_user import JWTUser
+import utils.context_manager.redis_object as red
 
 
 app = FastAPI(title="Bookstore API", description="API for bookstore backend", version="1.3")
 
 app.include_router(app_v1, prefix='/v1', dependencies=[Depends(check_jwt_token)])
 app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token)])
+
+
+@app.on_event('startup')
+async def connect_redis():
+    red.redis = await aioredis.create_redis_pool(REDIS_URL)
+
+
+@app.on_event('shutdown')
+async def disconnect_redis():
+    red.redis.close()
+    await red.redis.await_closed()
 
 
 # FastAPI requires that username and password be sent
