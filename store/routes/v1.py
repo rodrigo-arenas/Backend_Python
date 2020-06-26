@@ -1,3 +1,4 @@
+import pickle
 import utils.context_manager.redis_object as red
 from fastapi import Body, File, APIRouter
 from starlette.status import HTTP_201_CREATED
@@ -6,8 +7,8 @@ from models.user import User
 from models.author import Author
 from models.book import Book
 from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
-     db_get_book_with_isbn, db_get_author, db_get_author_from_id, db_patch_author)
-
+                                                db_get_book_with_isbn, db_get_author, db_get_author_from_id,
+                                                db_patch_author)
 
 app_v1 = APIRouter()
 
@@ -40,17 +41,26 @@ async def get_user_validation(username: str = Body(...), password: str = Body(..
 # Returns a Book model and removes author by default
 @app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"], tags=["Book"])
 async def get_book_with_isbn(isbn: str):
-    book = await db_get_book_with_isbn(isbn)
-    author = await db_get_author(book['author'])
-    author_object = Author(**author)
-    book['author'] = author_object
-    result_book = Book(**book)
-    return result_book
+
+    result = await red.redis.get(isbn)
+
+    if result:
+        result_book = pickle.loads(result)
+        return result_book
+    else:
+        book = await db_get_book_with_isbn(isbn)
+        author = await db_get_author(book['author'])
+        author_object = Author(**author)
+        book['author'] = author_object
+        print(book)
+        result_book = Book(**book)
+        await red.redis.set(isbn, pickle.dumps(book), expire=30)
+        return result_book
 
 
 # Query and path parameter
 @app_v1.get("/author/{author_id}/book", tags=["Author"])
-async def get_author_books(author_id: int,  order: str = "asc"):
+async def get_author_books(author_id: int, order: str = "asc"):
     author = await db_get_author_from_id(author_id)
     if bool(author):
         books = author['books']
@@ -83,4 +93,3 @@ async def update_photo(response: Response, profile_photo: bytes = File(...)):
     response.headers['x-file-size'] = str(len(profile_photo))
     response.set_cookie(key='cookie-api', value="test")
     return {"profile photo size": len(profile_photo)}
-
