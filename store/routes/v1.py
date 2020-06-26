@@ -1,4 +1,5 @@
-from fastapi import Body, Header, File, APIRouter
+import utils.context_manager.redis_object as red
+from fastapi import Body, File, APIRouter
 from starlette.status import HTTP_201_CREATED
 from starlette.responses import Response
 from models.user import User
@@ -21,8 +22,18 @@ async def post_user(user: User):
 # Query parameter /user/?password
 @app_v1.post('/login', tags=["User"])
 async def get_user_validation(username: str = Body(...), password: str = Body(...)):
-    is_valid = await db_check_personnel(username, password)
-    return {"is_valid": is_valid}
+    redis_key = f"{username},{password}"
+    result = await red.redis.get(redis_key, encoding='utf-8')
+    if result:
+        if result == 'True':
+            return {"is_valid (redis)": True}
+        else:
+            return {"is_valid (redis)": False}
+    else:
+        is_valid = await db_check_personnel(username, password)
+        await red.redis.set(redis_key, str(is_valid), expire=30)
+
+        return {"is_valid (db)": is_valid}
 
 
 # {} takes the parameter in the url itself (path parameter)
