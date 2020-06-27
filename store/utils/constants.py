@@ -11,3 +11,13 @@ DB_PASSWORD = 'postgres'
 DB_PORT = 5432
 
 REDIS_URL = 'redis://localhost'
+
+TEST = True
+
+TEST_DB_HOST = 'localhost'
+TEST_DB_NAME = 'test_bookstore'
+TEST_DB_USER = 'postgres'
+TEST_DB_PASSWORD = 'postgres'
+TEST_DB_PORT = 5432
+
+TEST_REDIS_URL = 'redis://localhost/1'
