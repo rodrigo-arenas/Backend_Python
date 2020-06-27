@@ -7,12 +7,12 @@ from models.user import User
 from models.author import Author
 from models.book import Book
 from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
-                                                db_get_book_with_isbn, db_get_author, db_get_author_from_id,
-                                                db_patch_author)
+                                                      db_get_book_with_isbn, db_get_author, db_get_author_from_id,
+                                                      db_patch_author)
 
 app_v1 = APIRouter()
 
-
+Changed redis connection call
 @app_v1.post('/user', status_code=HTTP_201_CREATED, tags=["User"])
 # async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
 async def post_user(user: User):
@@ -41,7 +41,6 @@ async def get_user_validation(username: str = Body(...), password: str = Body(..
 # Returns a Book model and removes author by default
 @app_v1.get("/book/{isbn}", response_model=Book, response_model_exclude=["author"], tags=["Book"])
 async def get_book_with_isbn(isbn: str):
-
     result = await red.redis.get(isbn)
 
     if result:
