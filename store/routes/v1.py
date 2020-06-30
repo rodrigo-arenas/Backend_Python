@@ -1,18 +1,19 @@
 import pickle
-import utils.context_manager.redis_object as red
+import store.utils.context_manager.redis_object as red
 from fastapi import Body, File, APIRouter
 from starlette.status import HTTP_201_CREATED
 from starlette.responses import Response
-from models.user import User
-from models.author import Author
-from models.book import Book
-from utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
+from store.models.user import User
+from store.models.author import Author
+from store.models.book import Book
+from store.utils.context_manager.db_functions import (db_insert_personnel, db_check_personnel,
                                                       db_get_book_with_isbn, db_get_author, db_get_author_from_id,
                                                       db_patch_author)
 
 app_v1 = APIRouter()
 
-Changed redis connection call
+
+# Changed redis connection call
 @app_v1.post('/user', status_code=HTTP_201_CREATED, tags=["User"])
 # async def post_user(user: User, x_custom: str = Header("Default header"), jwt: bool = Depends(check_jwt_token)):
 async def post_user(user: User):

@@ -14,7 +14,7 @@ cd store
 ### 3. Run de app
 * Use --reload only in dev environment
 ```
-uvicorn app:app --reload --port 5000
+uvicorn store.app:app --reload --port 5000
 ```
 
 ### 4. Go to localhost

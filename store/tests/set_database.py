@@ -1,7 +1,4 @@
-import asyncio
-from utils.context_manager.db_object import db_connection
-
-loop = asyncio.get_event_loop()
+from store.utils.context_manager.db_object import db_connection
 
 
 async def insert_user(username, password):
@@ -28,3 +25,5 @@ async def check_personnel_mail(name, mail):
             return True
         else:
             return False
+
+
