@@ -1,3 +1,5 @@
+CREATE SEQUENCE authors_id_seq;
+
 CREATE TABLE public.authors
 (
     id integer NOT NULL DEFAULT nextval('authors_id_seq'::regclass),
@@ -7,6 +9,8 @@ CREATE TABLE public.authors
 )
 
 TABLESPACE pg_default;
+
+ALTER SEQUENCE authors_id_seq OWNED BY authors.id;
 
 ALTER TABLE public.authors
     OWNER to postgres;
@@ -26,9 +30,11 @@ TABLESPACE pg_default;
 ALTER TABLE public.books
     OWNER to postgres;
 
+CREATE SEQUENCE personnel_Id_seq;
+
 CREATE TABLE public.personnel
 (
-    "Id" integer NOT NULL DEFAULT nextval('"users_Id_seq"'::regclass),
+    "Id" integer NOT NULL DEFAULT nextval('personnel_Id_seq'::regclass),
     name text COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE pg_catalog."default" NOT NULL,
     mail text COLLATE pg_catalog."default",
@@ -39,12 +45,17 @@ CREATE TABLE public.personnel
 
 TABLESPACE pg_default;
 
+ALTER SEQUENCE personnel_Id_seq OWNED BY personnel."Id";
+
 ALTER TABLE public.personnel
     OWNER to postgres;
 
+
+CREATE SEQUENCE users_Id_seq;
+
 CREATE TABLE public.users
 (
-    "Id" integer NOT NULL DEFAULT nextval('"users_Id_seq"'::regclass),
+    "Id" integer NOT NULL DEFAULT nextval('users_Id_seq'::regclass),
     username text COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE pg_catalog."default" NOT NULL,
     mail text COLLATE pg_catalog."default",
@@ -54,6 +65,8 @@ CREATE TABLE public.users
 )
 
 TABLESPACE pg_default;
+
+ALTER SEQUENCE users_Id_seq OWNED BY users."Id";
 
 ALTER TABLE public.users
     OWNER to postgres;
