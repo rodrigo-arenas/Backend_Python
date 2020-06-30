@@ -1,10 +1,13 @@
-from utils.context_manager.db_object import db_connection
+from store.utils.context_manager.db_object import db_connection
 
 
 async def db_get_user(user):
     async with db_connection as connection:
         query = f"SELECT * FROM public.fn_get_user('{user.username}')"
-        db_user = dict(await connection.fetchrow(query))
+        try:
+            db_user = dict(await connection.fetchrow(query))
+        except Exception as e:
+            db_user = {}
         return db_user
 
 
@@ -82,3 +85,5 @@ async def db_patch_author(author_id, name):
                                 '{author_id}', \
                                 '{name}')"
         await connection.execute(query)
+
+
