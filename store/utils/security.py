@@ -62,7 +62,7 @@ async def check_jwt_token(token: str = Depends(oauth_schema)):
         if time.time() < expiration and is_valid:
             return final_checks(role)
     except Exception as e:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=e)
     raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 
