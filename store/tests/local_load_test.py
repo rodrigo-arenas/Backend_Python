@@ -1,5 +1,10 @@
 from locust import HttpUser, TaskSet, task, between
 
+"""
+Run locus with:
+locust -f ./store/tests/local_load_test.py
+"""
+
 
 class BookstoreLocusTasks(TaskSet):
     @task
