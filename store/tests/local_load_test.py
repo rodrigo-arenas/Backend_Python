@@ -15,4 +15,5 @@ class BookstoreLocusTasks(TaskSet):
 class BookstoreLoadTest(HttpUser):
     tasks = [BookstoreLocusTasks]
     host = 'http://127.0.0.1:5000'
-    wait_time = between(3, 10)
+    wait_time = between(3, 5)
+    stop_timeout = 20
