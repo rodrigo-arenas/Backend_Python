@@ -1,6 +1,14 @@
 from store.utils.context_manager.db_object import db_connection
 
 
+async def db_get_datetime():
+    async with db_connection as connection:
+        query = "SELECT CURRENT_TIME"
+        db_time = dict(await connection.fetchrow(query))
+        print(db_time)
+        return db_time
+
+
 async def db_get_user(user):
     async with db_connection as connection:
         query = f"SELECT * FROM public.fn_get_user('{user.username}')"
