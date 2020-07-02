@@ -1,10 +1,12 @@
 import store.utils.context_manager.redis_object as red
+import store.utils.context_manager.db_object as database
 from fastapi import FastAPI, Depends, HTTPException
 from store.routes.v1 import app_v1
 from store.routes.v2 import app_v2
 from starlette.status import HTTP_401_UNAUTHORIZED
 from store.utils.security import check_jwt_token, authenticate_user, create_jwt_token
 from store.utils.context_manager.redis_object import redis_connection
+from store.utils.context_manager.db_object import db_connection
 from fastapi.security import OAuth2PasswordRequestForm
 from store.models.jwt_user import JWTUser
 
@@ -17,12 +19,14 @@ app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token),
 @app.on_event('startup')
 async def connect_redis():
     red.redis = await redis_connection()
+    database.pool = await db_connection()
 
 
 @app.on_event('shutdown')
 async def disconnect_redis():
     red.redis.close()
     await red.redis.await_closed()
+    await database.pool.close()
 
 
 # FastAPI requires that username and password be sent
