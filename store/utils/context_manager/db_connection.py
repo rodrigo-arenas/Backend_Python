@@ -1,4 +1,7 @@
 import asyncpg
+import warnings
+
+warnings.warn("This module is not longer used to database connection", DeprecationWarning)
 
 
 class DatabaseConnection(object):
@@ -7,7 +10,7 @@ class DatabaseConnection(object):
     """
 
     def __init__(self, host, port, database, user, password):
-        self.connection = None
+        self.pool = None
         self.host = host
         self.port = port
         self.database = database
@@ -15,19 +18,17 @@ class DatabaseConnection(object):
         self.password = password
 
     async def __aenter__(self):
-        self.connection = await asyncpg.create_pool(host=self.host,
-                                                    port=self.port,
-                                                    database=self.database,
-                                                    user=self.user,
-                                                    password=self.password,
-                                                    min_size=1,
-                                                    max_size=4,
-                                                    max_inactive_connection_lifetime=20)
+        self.pool = await asyncpg.create_pool(host=self.host,
+                                              port=self.port,
+                                              database=self.database,
+                                              user=self.user,
+                                              password=self.password,
+                                              min_size=2,
+                                              max_size=10,
+                                              max_inactive_connection_lifetime=60)
 
-        async with self.connection.acquire():
-            return self.connection
+        return self.pool
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         # its executed when connection close
-        await self.connection.close()
-
+        await self.pool.close()
