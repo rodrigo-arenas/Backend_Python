@@ -27,3 +27,6 @@ class BookstoreLoadTest(HttpUser):
     host = 'http://127.0.0.1:5000'
     wait_time = between(4, 10)
     stop_timeout = 20
+
+
+# ab -n 100 -c 5 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNTkzNzUxNDIzfQ.n6KskrUZOs1w9maZFVykVsAQWfj2PiEeRgr4dceyxXI" -p ab_jsons/post_user.json http://127.0.0.1:5000/v1/user
