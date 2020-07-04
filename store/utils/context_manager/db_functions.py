@@ -1,20 +1,26 @@
-from utils.context_manager.db_connection import DatabaseConnection
-from utils.constants import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
+import store.utils.context_manager.db_object as database
 
-db_connection = DatabaseConnection(host=DB_HOST, port=DB_PORT,
-                                   database=DB_NAME, user=DB_USER,
-                                   password=DB_PASSWORD)
+
+async def db_get_datetime():
+    async with database.pool.acquire() as connection:
+        query = "SELECT CURRENT_TIME"
+        db_time = dict(await connection.fetchrow(query))
+        print(db_time)
+        return db_time
 
 
 async def db_get_user(user):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_user('{user.username}')"
-        db_user = dict(await connection.fetchrow(query))
+        try:
+            db_user = dict(await connection.fetchrow(query))
+        except Exception as e:
+            db_user = {}
         return db_user
 
 
 async def db_check_jwt_username(username):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_user('{username}')"
         try:
             db_user = dict(await connection.fetchrow(query))
@@ -28,7 +34,7 @@ async def db_check_jwt_username(username):
 
 
 async def db_insert_personnel(user):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_insert_personnel(\
                                 '{user.name}', \
                                 '{user.password}', \
@@ -38,7 +44,7 @@ async def db_insert_personnel(user):
 
 
 async def db_check_personnel(username, password):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_personnel('{username}','{password}')"
         try:
             db_personnel = dict(await connection.fetchrow(query))
@@ -52,7 +58,7 @@ async def db_check_personnel(username, password):
 
 
 async def db_get_book_with_isbn(isbn):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_book('{isbn}')"
         try:
             db_book = dict(await connection.fetchrow(query))
@@ -62,7 +68,7 @@ async def db_get_book_with_isbn(isbn):
 
 
 async def db_get_author(author_name):
-    async with db_connection as connection:
+    async with database.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_author('{author_name}')"
         try:
             db_author = dict(await connection.fetchrow(query))
@@ -72,7 +78,7 @@ async def db_get_author(author_name):
 
 
 async def db_get_author_from_id(author_id):
-    async with db_connection as connection:
+    async with database.db.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_get_author_from_id('{author_id}')"
         try:
             db_author = dict(await connection.fetchrow(query))
@@ -82,8 +88,10 @@ async def db_get_author_from_id(author_id):
 
 
 async def db_patch_author(author_id, name):
-    async with db_connection as connection:
+    async with database.db.pool.acquire() as connection:
         query = f"SELECT * FROM public.fn_update_author_name(\
                                 '{author_id}', \
                                 '{name}')"
         await connection.execute(query)
+
+

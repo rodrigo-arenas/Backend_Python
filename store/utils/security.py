@@ -5,9 +5,9 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette.status import HTTP_401_UNAUTHORIZED
 from datetime import datetime, timedelta
-from models.jwt_user import JWTUser
-from utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
-from utils.context_manager.db_functions import db_get_user, db_check_jwt_username
+from store.models.jwt_user import JWTUser
+from store.utils.constants import JWT_EXPIRATION_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
+from store.utils.context_manager.db_functions import db_get_user, db_check_jwt_username
 
 
 pwd_context = CryptContext(schemes=["bcrypt"])
@@ -30,7 +30,11 @@ def verify_password(password, hashed_password):
 # Authenticate username and password to give JWT Token
 async def authenticate_user(user: JWTUser):
     potential_user = await db_get_user(user)
-    is_valid = verify_password(user.password, potential_user['password'])
+    try:
+        is_valid = verify_password(user.password, potential_user['password'])
+    except Exception as e:
+        is_valid = False
+
     if is_valid:
         user.role = "admin"
         return user
@@ -58,7 +62,7 @@ async def check_jwt_token(token: str = Depends(oauth_schema)):
         if time.time() < expiration and is_valid:
             return final_checks(role)
     except Exception as e:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=e)
     raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 
