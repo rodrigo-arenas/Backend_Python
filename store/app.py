@@ -1,20 +1,20 @@
-import store.utils.context_manager.redis_object as red
-import store.utils.context_manager.db_object as database
+import utils.context_manager.redis_object as red
+import utils.context_manager.db_object as database
 import pickle
 from fastapi import FastAPI, Depends, HTTPException
-from store.routes.v1 import app_v1
-from store.routes.v2 import app_v2
+from routes.v1 import app_v1
+from routes.v2 import app_v2
 from starlette.status import HTTP_401_UNAUTHORIZED
-from store.utils.security import check_jwt_token, authenticate_user, create_jwt_token
-from store.utils.context_manager.redis_object import redis_connection
-from store.utils.context_manager.db_object import db_connection
+from utils.security import check_jwt_token, authenticate_user, create_jwt_token
+from utils.context_manager.redis_object import redis_connection
+from utils.context_manager.db_object import db_connection
 from fastapi.security import OAuth2PasswordRequestForm
-from store.models.jwt_user import JWTUser
+from models.jwt_user import JWTUser
 
 app = FastAPI(title="Bookstore API", description="API for bookstore backend", version="1.3")
 
-app.include_router(app_v1, prefix='/v1', dependencies=[Depends(check_jwt_token), Depends(redis_connection)])
-app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token), Depends(redis_connection)])
+app.include_router(app_v1, prefix='/v1', dependencies=[Depends(check_jwt_token)])
+app.include_router(app_v2, prefix='/v2', dependencies=[Depends(check_jwt_token)])
 
 
 @app.on_event('startup')
