@@ -10,7 +10,7 @@ DB_USER = 'postgres'
 DB_PASSWORD = 'postgres'
 DB_PORT = 5432
 
-REDIS_URL = 'redis://localhost'
+REDIS_URL = 'redis://localhost/0'
 
 TEST = True
 
