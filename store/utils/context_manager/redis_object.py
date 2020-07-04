@@ -1,5 +1,5 @@
 import aioredis
-from store.utils.constants import TEST, REDIS_URL, TEST_REDIS_URL
+from utils.constants import TEST, REDIS_URL, TEST_REDIS_URL
 
 redis = None
 

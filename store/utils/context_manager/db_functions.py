@@ -1,4 +1,4 @@
-import store.utils.context_manager.db_object as database
+import utils.context_manager.db_object as database
 
 
 async def db_get_datetime():

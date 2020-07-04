@@ -1,7 +1,7 @@
 import asyncio
 import nest_asyncio
-import store.utils.context_manager.db_object as database
-from store.utils.context_manager.db_object import db_connection
+import utils.context_manager.db_object as database
+from utils.context_manager.db_object import db_connection
 
 nest_asyncio.apply()
 

@@ -1,8 +1,8 @@
 import asyncio
 from fastapi.testclient import TestClient
-from store.app import app
-from store.tests.set_database import insert_user, clear_db, check_personnel_mail
-from store.utils.security import get_hashed_password
+from app import app
+from tests.set_database import insert_user, clear_db, check_personnel_mail
+from utils.security import get_hashed_password
 
 client = TestClient(app)
 loop = asyncio.get_event_loop()
