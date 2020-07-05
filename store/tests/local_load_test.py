@@ -18,7 +18,7 @@ class BookstoreLocusTasks(TaskSet):
                      "password": uuid.uuid4().hex,
                      "mail": "mails@mail.com",
                      "role": "admin"}
-        auth_header = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNTkzODMxNjg0fQ.H02OUAfwbUTJrJvE0Ps6NJmi9RCmdGjiDAyAytUioJk'}
+        auth_header = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNTkzOTA5OTYzfQ.qT6ZhURLlANMngqhdVv7CaBi2OO6ow4QVOD6Fg7J30Y'}
         self.client.post('/v1/user', json=user_dict, headers=auth_header)
 
 
