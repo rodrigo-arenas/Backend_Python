@@ -1,0 +1,20 @@
+
+limit_req_zone $binary_remote_addr zone=bookstore:10m rate=2r/m;
+
+server {
+    listen 8082;
+
+    server_name http://127.0.0.1:8082;
+
+
+    location /v1/user {
+        limit_req zone=bookstore;
+        proxy_pass http://127.0.0.1:3000/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000/;
+    }
+
+
+}
